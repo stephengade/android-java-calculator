@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <style name="Theme.SENCalculator" parent="android:Theme.Material.Light.NoActionBar" />
+    <!-- Base application theme. -->
+    <style name="Theme.SENCalculator" parent="Theme.MaterialComponents.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/btn_operator</item>
+        <item name="colorPrimaryDark">@color/bg_calculator</item>
+        <item name="colorAccent">@color/btn_operator</item>
+        
+        <!-- Status bar and navigation bar colors -->
+        <item name="android:statusBarColor">@color/bg_calculator</item>
+        <item name="android:navigationBarColor">@color/bg_calculator</item>
+    </style>
 </resources>
