@@ -5,7 +5,6 @@ import android.view.View;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.button.MaterialButton;
-import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,7 +44,14 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btnDivide).setOnClickListener(v -> appendOperator("÷"));
         findViewById(R.id.btnPercent).setOnClickListener(v -> appendOperator("%"));
 
-        // Bind function buttons
+        // Bind advanced scientific buttons
+        findViewById(R.id.btnSin).setOnClickListener(v -> appendFunction("sin("));
+        findViewById(R.id.btnCos).setOnClickListener(v -> appendFunction("cos("));
+        findViewById(R.id.btnTan).setOnClickListener(v -> appendFunction("tan("));
+        findViewById(R.id.btnAtan).setOnClickListener(v -> appendFunction("arctan("));
+        findViewById(R.id.btnFactorial).setOnClickListener(v -> appendOperator("!"));
+
+        // Bind utility buttons
         findViewById(R.id.btnDot).setOnClickListener(v -> appendDot());
         findViewById(R.id.btnAC).setOnClickListener(v -> onClearClicked());
         findViewById(R.id.btnDEL).setOnClickListener(v -> onDeleteClicked());
@@ -75,14 +81,23 @@ public class MainActivity extends AppCompatActivity {
 
         char lastChar = expression.charAt(expression.length() - 1);
 
-        // If the last character is an operator, replace it
-        if (isOperator(lastChar)) {
+        // Replace operator if last was operator, unless this is the factorial postfix operator
+        if (ExpressionEvaluator.isOperator(lastChar) && !op.equals("!")) {
             expression = expression.substring(0, expression.length() - 1) + op;
-        } else if (expression.endsWith("(-")) {
-            // If it ends with "(-" and user clicks an operator, replace the entire negative indicator
+        } else if (expression.endsWith("(-") && !op.equals("!")) {
             expression = expression.substring(0, expression.length() - 2) + op;
         } else {
             expression += op;
+        }
+        updateDisplay();
+    }
+
+    private void appendFunction(String funcName) {
+        clearErrorIfNeeded();
+        if (expression.equals("0")) {
+            expression = funcName;
+        } else {
+            expression += funcName;
         }
         updateDisplay();
     }
@@ -112,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (!hasDot) {
             char lastChar = expression.charAt(expression.length() - 1);
-            if (isOperator(lastChar) || lastChar == '(' || lastChar == ')') {
+            if (ExpressionEvaluator.isOperator(lastChar) || lastChar == '(' || lastChar == ')') {
                 expression += "0.";
             } else {
                 expression += ".";
@@ -123,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void onToggleSignClicked() {
         clearErrorIfNeeded();
-        expression = toggleLastNumberSign(expression);
+        expression = ExpressionEvaluator.toggleLastNumberSign(expression);
         updateDisplay();
     }
 
@@ -136,30 +151,37 @@ public class MainActivity extends AppCompatActivity {
 
     private void onDeleteClicked() {
         clearErrorIfNeeded();
-        if (!expression.isEmpty()) {
+        if (expression.isEmpty()) return;
+
+        // Smart delete for full function strings
+        if (expression.endsWith("sin(") || expression.endsWith("cos(") || expression.endsWith("tan(")) {
+            expression = expression.substring(0, expression.length() - 4);
+        } else if (expression.endsWith("arctan(")) {
+            expression = expression.substring(0, expression.length() - 7);
+        } else {
             expression = expression.substring(0, expression.length() - 1);
-            updateDisplay();
         }
+        updateDisplay();
     }
 
     private void onEqualsClicked() {
         if (expression.isEmpty()) return;
 
         try {
-            String prepared = prepareForEvaluation(expression);
+            String prepared = ExpressionEvaluator.prepareForEvaluation(expression);
             if (prepared.isEmpty()) {
                 tvResult.setText("0");
                 expression = "";
                 return;
             }
-            double res = eval(prepared);
-            String finalResult = formatResult(res);
+            double res = ExpressionEvaluator.eval(prepared);
+            String finalResult = ExpressionEvaluator.formatResult(res);
 
             tvExpression.setText(expression);
             tvResult.setText(finalResult);
             expression = finalResult;
         } catch (Exception e) {
-            tvResult.setText("Error");
+            tvResult.setText(R.string.error);
             expression = "";
             isErrorState = true;
         }
@@ -174,15 +196,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         try {
-            String prepared = prepareForEvaluation(expression);
+            String prepared = ExpressionEvaluator.prepareForEvaluation(expression);
             if (prepared.isEmpty()) {
                 tvResult.setText("");
                 return;
             }
-            double res = eval(prepared);
-            tvResult.setText(formatResult(res));
+            double res = ExpressionEvaluator.eval(prepared);
+            tvResult.setText(ExpressionEvaluator.formatResult(res));
         } catch (Exception e) {
-            // For real-time updates, suppress error messages
+            // Suppress error logs during real-time typing preview
         }
     }
 
@@ -191,175 +213,5 @@ public class MainActivity extends AppCompatActivity {
             expression = "";
             isErrorState = false;
         }
-    }
-
-    private boolean isOperator(char c) {
-        return c == '+' || c == '-' || c == '×' || c == '÷' || c == '%';
-    }
-
-    private String toggleLastNumberSign(String expr) {
-        if (expr.isEmpty()) {
-            return "(-";
-        }
-
-        int len = expr.length();
-
-        // Check if expression ends with a wrapped negative number: "...(-123)"
-        if (expr.endsWith(")")) {
-            int openParen = expr.lastIndexOf("(");
-            if (openParen != -1 && openParen < len - 2 && expr.charAt(openParen + 1) == '-') {
-                String prefix = expr.substring(0, openParen);
-                String number = expr.substring(openParen + 2, len - 1);
-                return prefix + number;
-            }
-        }
-
-        // Scan backwards to find the boundaries of the last number
-        int i = len - 1;
-        while (i >= 0) {
-            char c = expr.charAt(i);
-            if (Character.isDigit(c) || c == '.') {
-                i--;
-            } else {
-                break;
-            }
-        }
-
-        int startOfNumber = i + 1;
-        if (startOfNumber < len) {
-            String prefix = expr.substring(0, startOfNumber);
-            String number = expr.substring(startOfNumber);
-
-            if (prefix.endsWith("(-")) {
-                return prefix.substring(0, prefix.length() - 2) + number;
-            } else {
-                return prefix + "(-" + number + ")";
-            }
-        } else {
-            return expr + "(-";
-        }
-    }
-
-    private String prepareForEvaluation(String expr) {
-        if (expr.isEmpty()) return "";
-
-        String balanced = balanceParentheses(expr);
-
-        // Trim trailing operators, open parens, or dots
-        while (balanced.length() > 0) {
-            char last = balanced.charAt(balanced.length() - 1);
-            if (isOperator(last) || last == '.' || last == '(') {
-                balanced = balanced.substring(0, balanced.length() - 1);
-            } else {
-                break;
-            }
-        }
-
-        return balanceParentheses(balanced);
-    }
-
-    private String balanceParentheses(String expr) {
-        int openCount = 0;
-        int closeCount = 0;
-        for (int i = 0; i < expr.length(); i++) {
-            char c = expr.charAt(i);
-            if (c == '(') openCount++;
-            else if (c == ')') closeCount++;
-        }
-        StringBuilder balanced = new StringBuilder(expr);
-        while (openCount > closeCount) {
-            balanced.append(')');
-            closeCount++;
-        }
-        return balanced.toString();
-    }
-
-    private String formatResult(double value) {
-        if (Double.isInfinite(value) || Double.isNaN(value)) {
-            return "Error";
-        }
-        if (value == (long) value) {
-            return String.format(Locale.US, "%d", (long) value);
-        } else {
-            String str = String.format(Locale.US, "%.10f", value);
-            if (str.contains(".")) {
-                str = str.replaceAll("0+$", "");
-                if (str.endsWith(".")) {
-                    str = str.substring(0, str.length() - 1);
-                }
-            }
-            return str;
-        }
-    }
-
-    // Custom expression evaluator (recursive-descent parser)
-    private double eval(final String str) {
-        return new Object() {
-            int pos = -1, ch;
-
-            void nextChar() {
-                ch = (++pos < str.length()) ? str.charAt(pos) : -1;
-            }
-
-            boolean eat(int charToEat) {
-                while (ch == ' ') nextChar();
-                if (ch == charToEat) {
-                    nextChar();
-                    return true;
-                }
-                return false;
-            }
-
-            double parse() {
-                nextChar();
-                double x = parseExpression();
-                if (pos < str.length()) throw new RuntimeException("Unexpected character: " + (char) ch);
-                return x;
-            }
-
-            double parseExpression() {
-                double x = parseTerm();
-                for (; ; ) {
-                    if (eat('+')) x += parseTerm();
-                    else if (eat('-')) x -= parseTerm();
-                    else return x;
-                }
-            }
-
-            double parseTerm() {
-                double x = parseFactor();
-                for (; ; ) {
-                    if (eat('*') || eat('×')) x *= parseFactor();
-                    else if (eat('/') || eat('÷')) {
-                        double divisor = parseFactor();
-                        if (divisor == 0) throw new ArithmeticException("Division by zero");
-                        x /= divisor;
-                    } else return x;
-                }
-            }
-
-            double parseFactor() {
-                if (eat('+')) return parseFactor();
-                if (eat('-')) return -parseFactor();
-
-                double x;
-                int startPos = this.pos;
-                if (eat('(')) {
-                    x = parseExpression();
-                    eat(')');
-                } else if ((ch >= '0' && ch <= '9') || ch == '.') {
-                    while ((ch >= '0' && ch <= '9') || ch == '.') nextChar();
-                    x = Double.parseDouble(str.substring(startPos, this.pos));
-                } else {
-                    throw new RuntimeException("Unexpected character: " + (char) ch);
-                }
-
-                if (eat('%')) {
-                    x = x / 100.0;
-                }
-
-                return x;
-            }
-        }.parse();
     }
 }

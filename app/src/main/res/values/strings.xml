@@ -1,3 +1,48 @@
 <resources>
     <string name="app_name">SEN-calculator</string>
+    
+    <!-- Calculator button labels -->
+    <string name="btn_sin">sin</string>
+    <string name="btn_cos">cos</string>
+    <string name="btn_tan">tan</string>
+    <string name="btn_atan">tan⁻¹</string>
+    <string name="btn_factorial">x!</string>
+    <string name="btn_ac">AC</string>
+    <string name="btn_del">DEL</string>
+    <string name="btn_percent">%</string>
+    <string name="btn_divide">÷</string>
+    <string name="btn_7">7</string>
+    <string name="btn_8">8</string>
+    <string name="btn_9">9</string>
+    <string name="btn_multiply">×</string>
+    <string name="btn_4">4</string>
+    <string name="btn_5">5</string>
+    <string name="btn_6">6</string>
+    <string name="btn_subtract">-</string>
+    <string name="btn_1">1</string>
+    <string name="btn_2">2</string>
+    <string name="btn_3">3</string>
+    <string name="btn_plus">+</string>
+    <string name="btn_toggle_sign">±</string>
+    <string name="btn_0">0</string>
+    <string name="btn_dot">.</string>
+    <string name="btn_equals">=</string>
+    <string name="default_result">0</string>
+    <string name="error">Error</string>
+    
+    <!-- Accessibility descriptions -->
+    <string name="desc_sin">sine</string>
+    <string name="desc_cos">cosine</string>
+    <string name="desc_tan">tangent</string>
+    <string name="desc_atan">inverse tangent</string>
+    <string name="desc_factorial">factorial</string>
+    <string name="desc_ac">all clear</string>
+    <string name="desc_del">delete</string>
+    <string name="desc_percent">percent</string>
+    <string name="desc_divide">divide</string>
+    <string name="desc_multiply">multiply</string>
+    <string name="desc_subtract">minus</string>
+    <string name="desc_plus">plus</string>
+    <string name="desc_toggle_sign">plus minus</string>
+    <string name="desc_equals">equals</string>
 </resources>

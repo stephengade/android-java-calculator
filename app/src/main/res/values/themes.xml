@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/btn_operator</item>
         <item name="colorPrimaryDark">@color/bg_calculator</item>
         <item name="colorAccent">@color/btn_operator</item>
+        <item name="android:windowBackground">@color/bg_calculator</item>
         
         <!-- Status bar and navigation bar colors -->
         <item name="android:statusBarColor">@color/bg_calculator</item>
