@@ -199,6 +199,14 @@ public class ExpressionEvaluator {
                     x = parseExpression();
                     eat(')');
                     x = Math.toDegrees(Math.atan(x));
+                } else if (eatFunction("arccos")) {
+                    x = parseExpression();
+                    eat(')');
+                    x = Math.toDegrees(Math.acos(x));
+                } else if (eatFunction("arcsin")) {
+                    x = parseExpression();
+                    eat(')');
+                    x = Math.toDegrees(Math.asin(x));
                 } else if ((ch >= '0' && ch <= '9') || ch == '.') {
                     while ((ch >= '0' && ch <= '9') || ch == '.') nextChar();
                     x = Double.parseDouble(str.substring(startPos, this.pos));

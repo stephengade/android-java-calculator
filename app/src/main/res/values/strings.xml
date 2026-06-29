@@ -5,7 +5,11 @@
     <string name="btn_sin">sin</string>
     <string name="btn_cos">cos</string>
     <string name="btn_tan">tan</string>
+    <string name="btn_acos">cos⁻¹</string>
+    <string name="btn_asin">sin⁻¹</string>
+
     <string name="btn_atan">tan⁻¹</string>
+
     <string name="btn_factorial">x!</string>
     <string name="btn_ac">AC</string>
     <string name="btn_del">DEL</string>
@@ -35,6 +39,8 @@
     <string name="desc_cos">cosine</string>
     <string name="desc_tan">tangent</string>
     <string name="desc_atan">inverse tangent</string>
+    <string name="desc_asin">inverse sine</string>
+    <string name="desc_acos">inverse cosine</string>
     <string name="desc_factorial">factorial</string>
     <string name="desc_ac">all clear</string>
     <string name="desc_del">delete</string>

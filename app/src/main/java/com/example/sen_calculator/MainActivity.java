@@ -12,6 +12,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvResult;
     private String expression = "";
     private boolean isErrorState = false;
+    private boolean hasFinishedEvaluation = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btnCos).setOnClickListener(v -> appendFunction("cos("));
         findViewById(R.id.btnTan).setOnClickListener(v -> appendFunction("tan("));
         findViewById(R.id.btnAtan).setOnClickListener(v -> appendFunction("arctan("));
+        findViewById(R.id.btnAcos).setOnClickListener(v -> appendFunction("arccos("));
+        findViewById(R.id.btnAsin).setOnClickListener(v -> appendFunction("arcsin("));
         findViewById(R.id.btnFactorial).setOnClickListener(v -> appendOperator("!"));
 
         // Bind utility buttons
@@ -61,7 +64,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void appendNumber(String num) {
         clearErrorIfNeeded();
-        if (expression.equals("0")) {
+        if (hasFinishedEvaluation) {
+            expression = num;
+            hasFinishedEvaluation = false;
+        } else if (expression.equals("0")) {
             expression = num;
         } else {
             expression += num;
@@ -71,6 +77,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void appendOperator(String op) {
         clearErrorIfNeeded();
+        if (hasFinishedEvaluation) {
+            hasFinishedEvaluation = false;
+            expression = expression + op;
+            updateDisplay();
+            return;
+        }
         if (expression.isEmpty()) {
             if (op.equals("-")) {
                 expression = "-";
@@ -94,7 +106,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void appendFunction(String funcName) {
         clearErrorIfNeeded();
-        if (expression.equals("0")) {
+        if (hasFinishedEvaluation) {
+            expression = funcName;
+            hasFinishedEvaluation = false;
+        } else if (expression.equals("0")) {
             expression = funcName;
         } else {
             expression += funcName;
@@ -104,6 +119,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void appendDot() {
         clearErrorIfNeeded();
+        if (hasFinishedEvaluation) {
+            expression = "0.";
+            hasFinishedEvaluation = false;
+            updateDisplay();
+            return;
+        }
         if (expression.isEmpty()) {
             expression = "0.";
             updateDisplay();
@@ -138,6 +159,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void onToggleSignClicked() {
         clearErrorIfNeeded();
+        if (hasFinishedEvaluation) {
+            hasFinishedEvaluation = false;
+        }
         expression = ExpressionEvaluator.toggleLastNumberSign(expression);
         updateDisplay();
     }
@@ -145,18 +169,22 @@ public class MainActivity extends AppCompatActivity {
     private void onClearClicked() {
         expression = "";
         isErrorState = false;
+        hasFinishedEvaluation = false;
         tvExpression.setText("");
         tvResult.setText("0");
     }
 
     private void onDeleteClicked() {
         clearErrorIfNeeded();
+        if (hasFinishedEvaluation) {
+            hasFinishedEvaluation = false;
+        }
         if (expression.isEmpty()) return;
 
         // Smart delete for full function strings
         if (expression.endsWith("sin(") || expression.endsWith("cos(") || expression.endsWith("tan(")) {
             expression = expression.substring(0, expression.length() - 4);
-        } else if (expression.endsWith("arctan(")) {
+        } else if (expression.endsWith("arctan(") || expression.endsWith("arcsin(") || expression.endsWith("arccos(")) {
             expression = expression.substring(0, expression.length() - 7);
         } else {
             expression = expression.substring(0, expression.length() - 1);
@@ -172,18 +200,21 @@ public class MainActivity extends AppCompatActivity {
             if (prepared.isEmpty()) {
                 tvResult.setText("0");
                 expression = "";
+                hasFinishedEvaluation = false;
                 return;
             }
             double res = ExpressionEvaluator.eval(prepared);
             String finalResult = ExpressionEvaluator.formatResult(res);
 
-            tvExpression.setText(expression);
+            tvExpression.setText(prepared + " =");
             tvResult.setText(finalResult);
             expression = finalResult;
+            hasFinishedEvaluation = true;
         } catch (Exception e) {
             tvResult.setText(R.string.error);
             expression = "";
             isErrorState = true;
+            hasFinishedEvaluation = false;
         }
     }
 
