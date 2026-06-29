@@ -24,6 +24,17 @@ public class ExpressionEvaluator {
         return balanced.toString();
     }
 
+    public static String insertImplicitMultiplication(String expr) {
+        String result = expr;
+        // Digit followed by '(', 'sin', 'cos', 'tan', 'arcsin', 'arccos', 'arctan', 'ln', 'π'
+        result = result.replaceAll("(\\d)(?=[\\(a-zA-Zπ])", "$1×");
+        // ')' followed by digit, '(', 'sin', etc., 'π'
+        result = result.replaceAll("(\\))(?=[\\d\\(a-zA-Zπ])", "$1×");
+        // 'π' followed by digit, '(', 'sin', etc.
+        result = result.replaceAll("(π)(?=[\\d\\(a-zA-Z])", "$1×");
+        return result;
+    }
+
     public static String prepareForEvaluation(String expr) {
         if (expr.isEmpty()) return "";
 
@@ -39,7 +50,8 @@ public class ExpressionEvaluator {
             }
         }
 
-        return balanceParentheses(balanced);
+        balanced = balanceParentheses(balanced);
+        return insertImplicitMultiplication(balanced);
     }
 
     public static String formatResult(double value) {
@@ -181,6 +193,8 @@ public class ExpressionEvaluator {
                 if (eat('(')) {
                     x = parseExpression();
                     eat(')');
+                } else if (eat('π')) {
+                    x = Math.PI;
                 } else if (eatFunction("sin")) {
                     x = parseExpression();
                     eat(')');
@@ -207,6 +221,11 @@ public class ExpressionEvaluator {
                     x = parseExpression();
                     eat(')');
                     x = Math.toDegrees(Math.asin(x));
+                } else if (eatFunction("ln")) {
+                    x = parseExpression();
+                    eat(')');
+                    if (x <= 0) throw new ArithmeticException("Invalid ln argument");
+                    x = Math.log(x);
                 } else if ((ch >= '0' && ch <= '9') || ch == '.') {
                     while ((ch >= '0' && ch <= '9') || ch == '.') nextChar();
                     x = Double.parseDouble(str.substring(startPos, this.pos));

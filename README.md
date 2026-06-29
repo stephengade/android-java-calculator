@@ -2,6 +2,10 @@
 
 A beautiful, responsive, and lightweight Scientific Calculator application built for Android using Java.
 
+![Calculator Screenshot](calculator_screenshot.png)
+
+
+
 ---
 
 ## Features ✨
@@ -25,11 +29,13 @@ A beautiful, responsive, and lightweight Scientific Calculator application built
 ## How to Build & Run 🚀
 
 ### Prerequisites
+
 * **Android Studio** (Koala or newer recommended)
 * **Android SDK** (API 24+)
 * **JDK 17** (or bundled with Android Studio)
 
 ### Steps
+
 1. **Clone the repository:**
    ```bash
    git clone https://github.com/stephengade/android-java-calculator.git
@@ -41,3 +47,4 @@ A beautiful, responsive, and lightweight Scientific Calculator application built
 3. **Run on Emulator or Device:**
    * Connect a physical device with USB debugging enabled, or start a virtual device (AVD) from the **Device Manager**.
    * Click the green **Run** (Play) button in Android Studio.
+

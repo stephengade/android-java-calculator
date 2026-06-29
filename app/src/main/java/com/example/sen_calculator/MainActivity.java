@@ -53,6 +53,10 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btnAcos).setOnClickListener(v -> appendFunction("arccos("));
         findViewById(R.id.btnAsin).setOnClickListener(v -> appendFunction("arcsin("));
         findViewById(R.id.btnFactorial).setOnClickListener(v -> appendOperator("!"));
+        findViewById(R.id.btnLn).setOnClickListener(v -> appendFunction("ln("));
+        findViewById(R.id.btnPi).setOnClickListener(v -> appendNumber("π"));
+        findViewById(R.id.btnOpenParen).setOnClickListener(v -> appendNumber("("));
+        findViewById(R.id.btnCloseParen).setOnClickListener(v -> appendNumber(")"));
 
         // Bind utility buttons
         findViewById(R.id.btnDot).setOnClickListener(v -> appendDot());
@@ -186,6 +190,8 @@ public class MainActivity extends AppCompatActivity {
             expression = expression.substring(0, expression.length() - 4);
         } else if (expression.endsWith("arctan(") || expression.endsWith("arcsin(") || expression.endsWith("arccos(")) {
             expression = expression.substring(0, expression.length() - 7);
+        } else if (expression.endsWith("ln(")) {
+            expression = expression.substring(0, expression.length() - 3);
         } else {
             expression = expression.substring(0, expression.length() - 1);
         }

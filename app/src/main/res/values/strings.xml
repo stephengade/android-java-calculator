@@ -31,6 +31,10 @@
     <string name="btn_0">0</string>
     <string name="btn_dot">.</string>
     <string name="btn_equals">=</string>
+    <string name="btn_ln">ln</string>
+    <string name="btn_pi">π</string>
+    <string name="btn_open_paren">(</string>
+    <string name="btn_close_paren">)</string>
     <string name="default_result">0</string>
     <string name="error">Error</string>
     
@@ -51,4 +55,8 @@
     <string name="desc_plus">plus</string>
     <string name="desc_toggle_sign">plus minus</string>
     <string name="desc_equals">equals</string>
+    <string name="desc_ln">natural logarithm</string>
+    <string name="desc_pi">pi</string>
+    <string name="desc_open_paren">open parenthesis</string>
+    <string name="desc_close_paren">close parenthesis</string>
 </resources>
