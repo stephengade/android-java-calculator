@@ -1,4 +1,4 @@
-# Scientific Android Calculator 📱📐
+# Android Calculator 📱📐
 
 A beautiful, responsive, and lightweight Scientific Calculator application built for Android using Java.
 
@@ -36,11 +36,7 @@ A beautiful, responsive, and lightweight Scientific Calculator application built
 
 ### Steps
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/stephengade/android-java-calculator.git
-   cd android-java-calculator
-   ```
+1. **Clone the repository**
 2. **Open in Android Studio:**
    * Open Android Studio -> *File* -> *Open* -> Select the project folder.
    * Allow Gradle to sync.
